@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Three Bowls Puzzle | DTR</title>
+<style>
+  :root {
+    --level-color: #1565C0;
+  }
+  body {
+    background: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  .card {
+    max-width: 960px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 4px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.08),
+      0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+  .badge {
+    float: right;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.4;
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--level-color) 80%, white 20%),
+      var(--level-color));
+  }
+  .dtr-label { font-size: 14px; color: #404040; }
+  .tag-line { font-size: 11px; color: #666; margin-top: 3px; }
+  .title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+    margin: 10px 0 8px;
+    letter-spacing: 0.5px;
+  }
+  .click-hint {
+    text-align: center;
+    margin: 6px 0 10px;
+    color: #666;
+    font-size: 14px;
+  }
+  .click-hint .deco-icon {
+    display: inline-block;
+    background: #1565C0;
+    color: #fff;
+    border-radius: 6px;
+    width: 26px;
+    height: 26px;
+    text-align: center;
+    line-height: 26px;
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  hr.rule {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 4px 0;
+  }
+  .audio-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+  .audio-btn {
+    background: #1565C0;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.2s;
+  }
+  .audio-btn.playing {
+    background: #C62828;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%   { transform: scale(1.0); }
+    50%  { transform: scale(1.04); }
+    100% { transform: scale(1.0); }
+  }
+  .directions-text { font-size: 15px; color: #212121; }
+  .pres-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2E7D32;
+  }
+  .question-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .question-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--level-color);
+    color: #fff;
+    font-weight: bold;
+    font-size: 13px;
+  }
+  .question-label {
+    font-size: 15px;
+    font-weight: bold;
+    color: #212121;
+  }
+  .question-text {
+    margin: 6px 0 8px 52px;
+    font-size: 15px;
+    color: #212121;
+  }
+  .choices {
+    margin: 0 0 12px 52px;
+  }
+  .choice-row {
+    padding: 6px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  @media (hover: hover) {
+    .choice-row:hover {
+      background-color: color-mix(in srgb, var(--level-color) 12%, transparent 88%);
+    }
+  }
+  .choice-row label {
+    font-size: 14px;
+    color: #212121;
+    cursor: pointer;
+  }
+  .choice-row input[type="radio"] {
+    margin-right: 8px;
+  }
+  .submit-button {
+    display: block;
+    margin: 16px auto 4px;
+    padding: 12px 36px;
+    background: #1565C0;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .submit-button.disabled,
+  .submit-button:disabled {
+    background: #90A4AE;
+    cursor: not-allowed;
+  }
+  .submit-helper {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .instruction {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+    margin: 4px 0 12px;
+  }
+  .feedback-block {
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 12px 0;
+    font-size: 14px;
+    background: #F5F5F5;
+    border-left: 4px solid #666;
+  }
+  .feedback-block.hidden { display: none; }
+  .smart-support {
+    background: #FFFF00;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #212121;
+    margin-top: 4px;
+  }
+  .alignment-footer {
+    text-align: right;
+    font-size: 10px;
+    color: #999;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- HEADER -->
+  <div style="overflow:hidden;margin-bottom:6px;">
+    <div class="badge">
+      ELPAC Level 1<br>Lexile 1300-1400L
+    </div>
+    <div class="dtr-label">DTR &nbsp;|&nbsp; Listen to an Oral Presentation</div>
+    <div class="tag-line">Grade 8 | MS Science | Energy Transfer, Mass, Matter Type, and Temperature | Puzzle Quest | Middle Eastern &amp; North African Perspectives</div>
+    <div class="tag-line" style="font-family:Courier,monospace;">Tag: LOP-MS8-L1-13001400-MSSCI8-PZQ-MNA-01 (Deck A)</div>
+  </div>
+
+  <!-- TITLE -->
+  <h1 class="title">The Three Bowls Puzzle</h1>
+
+  <!-- CLICK TO LISTEN (decorative only) -->
+  <div class="click-hint">
+    Click &nbsp;<span class="deco-icon">🎧</span>&nbsp; to listen.
+  </div>
+
+  <!-- Horizontal Rule 1 -->
+  <hr class="rule">
+
+  <!-- Directions row (audio element 1) -->
+  <div class="audio-row">
+    <button id="btnDir" class="audio-btn" aria-label="Play Directions">🎧</button>
+    <div class="directions-text">Listen to a presentation. Listen carefully. You will hear the presentation only once. After listening, you will answer four questions.</div>
+  </div>
+
+  <!-- Listen to the Presentation row (audio element 2) -->
+  <div class="audio-row">
+    <button id="btnPres" class="audio-btn" aria-label="Play Presentation">🎧</button>
+    <div class="pres-label">Listen to the Presentation</div>
+  </div>
+
+  <!-- Question 1 (audio element 3) -->
+  <div class="audio-row">
+    <button id="btnQ1" class="audio-btn" aria-label="Play Question 1">🎧</button>
+    <div class="question-row">
+      <span class="question-badge">1</span>
+      <span class="question-label">QUESTION 1:</span>
+    </div>
+  </div>
+  <div class="question-text">What is the teacher mainly talking about?</div>
+  <div class="choices">
+    <div class="choice-row"><label><input type="radio" name="q1" value="A"> A. how to make mint tea the way his grandmother did</label></div>
+    <div class="choice-row"><label><input type="radio" name="q1" value="B"> B. why brass is the best material for tea bowls</label></div>
+    <div class="choice-row"><label><input type="radio" name="q1" value="C"> C. a puzzle about why drinks cool down differently</label></div>
+  </div>
+
+  <!-- Question 2 (audio element 4) -->
+  <div class="audio-row">
+    <button id="btnQ2" class="audio-btn" aria-label="Play Question 2">🎧</button>
+    <div class="question-row">
+      <span class="question-badge">2</span>
+      <span class="question-label">QUESTION 2:</span>
+    </div>
+  </div>
+  <div class="question-text">In the first round of the puzzle, why does the tea in the brass bowl cool the fastest?</div>
+  <div class="choices">
+    <div class="choice-row"><label><input type="radio" name="q2" value="A"> A. The brass bowl is thinner than the clay or glass bowls.</label></div>
+    <div class="choice-row"><label><input type="radio" name="q2" value="B"> B. Brass moves heat out of the tea faster than clay or glass does.</label></div>
+    <div class="choice-row"><label><input type="radio" name="q2" value="C"> C. The brass bowl holds less tea than the other two bowls.</label></div>
+  </div>
+
+  <!-- Question 3 (audio element 5) -->
+  <div class="audio-row">
+    <button id="btnQ3" class="audio-btn" aria-label="Play Question 3">🎧</button>
+    <div class="question-row">
+      <span class="question-badge">3</span>
+      <span class="question-label">QUESTION 3:</span>
+    </div>
+  </div>
+  <div class="question-text">In the second round, what does the teacher learn about the bowl with the least amount of tea?</div>
+  <div class="choices">
+    <div class="choice-row"><label><input type="radio" name="q3" value="A"> A. It cools the fastest because it holds less heat energy.</label></div>
+    <div class="choice-row"><label><input type="radio" name="q3" value="B"> B. It cools the slowest because it has more room to keep the heat.</label></div>
+    <div class="choice-row"><label><input type="radio" name="q3" value="C"> C. It cools at the same rate as the other two brass bowls.</label></div>
+  </div>
+
+  <!-- Question 4 (audio element 6) -->
+  <div class="audio-row">
+    <button id="btnQ4" class="audio-btn" aria-label="Play Question 4">🎧</button>
+    <div class="question-row">
+      <span class="question-badge">4</span>
+      <span class="question-label">QUESTION 4:</span>
+    </div>
+  </div>
+  <div class="question-text">Why does the teacher describe holding the brass bowl and the clay bowl at the same temperature?</div>
+  <div class="choices">
+    <div class="choice-row"><label><input type="radio" name="q4" value="A"> A. to explain why brass bowls cost more than clay bowls in Marrakech</label></div>
+    <div class="choice-row"><label><input type="radio" name="q4" value="B"> B. to show that the same temperature can feel different depending on the matter type</label></div>
+    <div class="choice-row"><label><input type="radio" name="q4" value="C"> C. to show that the brass bowl had a higher temperature than the clay bowl</label></div>
+  </div>
+
+  <!-- Submit + helper (Rule 31 four-question gate) -->
+  <button id="submit" class="submit-button disabled" disabled>Submit</button>
+  <div id="submit-helper" class="submit-helper">Answer all 4 questions to submit.</div>
+
+  <!-- Instruction -->
+  <div class="instruction">Choose the best answer for each question. You may change your answers before submitting.</div>
+
+  <!-- Feedback (hidden until submit) -->
+  <div id="feedback" class="feedback-block hidden"></div>
+
+  <!-- RULE 2 (Deck A only) -->
+  <hr class="rule">
+
+  <!-- SMART SUPPORT ROW (Deck A only) - audio element 7 -->
+  <div class="audio-row" style="align-items:flex-start;">
+    <button id="btnSS" class="audio-btn" aria-label="Play SMART SUPPORT">🎧</button>
+    <div style="flex:1;">
+      <div class="question-label" style="color:#2E7D32;font-weight:bold;">SMART SUPPORT:</div>
+      <div class="smart-support">Go back to the conversation. Locate the line that names the puzzle. Locate the line that says how brass moves heat. Locate the line that says what a smaller mass holds. Locate the line that says why the brass bowl feels hotter than the clay bowl.</div>
+    </div>
+  </div>
+
+  <!-- CONTENT ALIGNMENT (Deck A only) -->
+  <div class="alignment-footer">
+    CA ELD: PI.B.5, PI.B.7, PI.B.8, PII.A.1 | CCSS/NGSS: NGSS MS-PS1-4 / MS-PS3-4 | MS Science Grade 8
+  </div>
+
+</div>
+
+<script>
+  // === Base64 audio sources (filled by build_html_cards.js) ===
+  const b64_dir  = "[BASE64_DIRECTIONS]";
+  const b64_pres = "[BASE64_PRESENTATION]";
+  const b64_q1   = "[BASE64_QUESTION1]";
+  const b64_q2   = "[BASE64_QUESTION2]";
+  const b64_q3   = "[BASE64_QUESTION3]";
+  const b64_q4   = "[BASE64_QUESTION4]";
+  const b64_ss   = "[BASE64_SMARTSUPPORT]";
+
+  function makeURL(b64) {
+    const bin = atob(b64);
+    const len = bin.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+    return URL.createObjectURL(new Blob([bytes], { type: 'audio/mpeg' }));
+  }
+
+  const aud = {
+    dir:  new Audio(makeURL(b64_dir)),
+    pres: new Audio(makeURL(b64_pres)),
+    q1:   new Audio(makeURL(b64_q1)),
+    q2:   new Audio(makeURL(b64_q2)),
+    q3:   new Audio(makeURL(b64_q3)),
+    q4:   new Audio(makeURL(b64_q4)),
+    ss:  new Audio(makeURL(b64_ss)),
+  };
+
+  const allAudio = Object.values(aud);
+
+  function bind(btnId, key) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    const a = aud[key];
+    let playing = false;
+
+    function toggle() {
+      if (playing) {
+        a.pause();
+        a.currentTime = 0;
+        btn.classList.remove('playing');
+        playing = false;
+      } else {
+        allAudio.forEach(x => { if (x && x !== a) { x.pause(); x.currentTime = 0; } });
+        document.querySelectorAll('.audio-btn').forEach(b => b.classList.remove('playing'));
+        a.play();
+        btn.classList.add('playing');
+        playing = true;
+        a.onended = () => {
+          btn.classList.remove('playing');
+          playing = false;
+        };
+      }
+    }
+
+    btn.addEventListener('touchend', e => { e.preventDefault(); toggle(); });
+    btn.addEventListener('click', toggle);
+  }
+
+  bind('btnDir',  'dir');
+  bind('btnPres', 'pres');
+  bind('btnQ1',   'q1');
+  bind('btnQ2',   'q2');
+  bind('btnQ3',   'q3');
+  bind('btnQ4',   'q4');
+  bind('btnSS', 'ss');
+
+  // === Rule 31: four-question Submit gate with atomic lock ===
+  const ANSWER_COUNT_REQUIRED = 4;
+  const IS_DECK_A = true;
+
+  function getAnsweredCount() {
+    let count = 0;
+    for (let q = 1; q <= 4; q++) {
+      const selected = document.querySelector(`input[name="q${q}"]:checked`);
+      if (selected) count++;
+    }
+    return count;
+  }
+
+  function updateSubmitState() {
+    const count = getAnsweredCount();
+    const submitBtn = document.getElementById('submit');
+    const helper = document.getElementById('submit-helper');
+    if (count === ANSWER_COUNT_REQUIRED) {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('disabled');
+      helper.textContent = 'Click Submit to lock your answers.';
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.classList.add('disabled');
+      helper.textContent = 'Answer all 4 questions to submit.';
+    }
+  }
+
+  document.querySelectorAll('input[type=radio]').forEach(r =>
+    r.addEventListener('change', updateSubmitState)
+  );
+
+  let submitted = false;
+
+  function showFeedback() {
+    const correct = ["C", "B", "A", "B"];
+    let correctCount = 0;
+    const perQ = [];
+    for (let q = 1; q <= 4; q++) {
+      const node = document.querySelector(`input[name="q${q}"]:checked`);
+      const selected = node ? node.value : '\u2014';
+      const isRight = (selected === correct[q-1]);
+      if (isRight) correctCount++;
+      perQ.push(`Q${q}: ${isRight ? '\u2713 correct' : '\u2717 ' + selected + ' (correct: ' + correct[q-1] + ')'}`);
+    }
+    const fb = document.getElementById('feedback');
+    let html = `<strong>${correctCount} of 4 correct.</strong><br>${perQ.join('<br>')}`;
+    if (correctCount < 4) {
+      html += '<br><br>' + (IS_DECK_A
+        ? 'Go back and listen again. Use the SMART SUPPORT to guide your next attempt.'
+        : 'Go back and listen again. Listen carefully across the whole presentation.');
+    }
+    fb.innerHTML = html;
+    fb.classList.remove('hidden');
+  }
+
+  document.getElementById('submit').addEventListener('click', () => {
+    if (submitted) return;
+    if (getAnsweredCount() !== ANSWER_COUNT_REQUIRED) return;
+    submitted = true;
+    document.querySelectorAll('input[type=radio]').forEach(r => r.disabled = true);
+    const submitBtn = document.getElementById('submit');
+    submitBtn.disabled = true;
+    submitBtn.classList.add('disabled');
+    document.getElementById('submit-helper').textContent = 'Answers locked.';
+    showFeedback();
+  });
+
+  updateSubmitState();
+</script>
+</body>
+</html>
