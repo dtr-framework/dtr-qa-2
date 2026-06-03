@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Six-Panel Sky | DTR</title>
 <style>
-  :root { --level-color: #1565C0; }
+  :root { --level-color: #2E7D32; }
   body { background:#f0f0f0; margin:0; padding:20px; font-family:Arial, sans-serif; }
   .card { max-width:960px; margin:0 auto; background:#fff; padding:24px; border-radius:4px;
     box-shadow:0 1px 2px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06); }
@@ -45,9 +45,9 @@
 </head>
 <body>
 <div class="card">
-  <div class="badge">ELPAC Level 1<br>Lexile 1000–1300L</div>
+  <div class="badge">ELPAC Level 2<br>Lexile 1300–1400L</div>
   <div class="dtr-label">DTR | Listen to an Oral Presentation</div>
-  <div class="tag-line">LOP-MS7-L1-10001300-MSSS7-CSR-API-02 | MS Social Studies: Grade 7 | The Scientific Revolution | Comic or Storyboard Retelling | Asian &amp; Pacific Islander Narratives</div>
+  <div class="tag-line">LOP-MS7-L2-13001400-MSSS7-CSR-API-02 | MS Social Studies: Grade 7 | The Scientific Revolution | Comic or Storyboard Retelling | Asian &amp; Pacific Islander Narratives</div>
   <div class="title">The Six-Panel Sky</div>
   <div class="click-hint">Click <span class="deco-icon">🎧</span> to listen.</div>
   <div class="hr"></div>
@@ -115,17 +115,6 @@
   <div id="submit-helper" class="submit-helper">Answer all 4 questions to submit.</div>
   <div class="instruction">Choose the best answer for each question. You may change your answers before submitting.</div>
   <div id="feedback" class="feedback-block hidden"></div>
-  <div class="hr"></div>
-  <div class="audio-row">
-    <button id="btnSS" class="audio-btn" aria-label="Play SMART SUPPORT">🎧</button>
-    <div>
-      <div class="question-label">SMART SUPPORT:</div>
-      <div class="smart-support">Go back to the conversation. Identify what the teacher is explaining. Identify what the sky watchers in China did. Identify how Galileo&#x27;s work connects to Asia. Identify why the teacher draws the arrows.</div>
-    </div>
-  </div>
-  <div class="alignment-footer">
-    CA ELD: PI.B.5, PI.B.7, PI.B.8, PII.A.1 | CCSS: CA HSS 7.10 | MS Social Studies: Grade 7
-  </div>
 
 <script>
   const b64_dir  = "[BASE64_DIRECTIONS]";
@@ -134,7 +123,6 @@
   const b64_q2   = "[BASE64_QUESTION2]";
   const b64_q3   = "[BASE64_QUESTION3]";
   const b64_q4   = "[BASE64_QUESTION4]";
-  const b64_ss   = "[BASE64_SMARTSUPPORT]";
   function makeURL(b64) {
     const bytes = Uint8Array.from(atob(b64), ch => ch.charCodeAt(0));
     return URL.createObjectURL(new Blob([bytes], { type:'audio/mpeg' }));
@@ -145,8 +133,7 @@
     q1:   new Audio(makeURL(b64_q1)),
     q2:   new Audio(makeURL(b64_q2)),
     q3:   new Audio(makeURL(b64_q3)),
-    q4:   new Audio(makeURL(b64_q4)),
-    ss:   new Audio(makeURL(b64_ss))
+    q4:   new Audio(makeURL(b64_q4))
   };
   let currentBtn=null, currentAud=null;
   function stopAll() {
@@ -171,7 +158,6 @@
   bind('btnQ2',   'q2');
   bind('btnQ3',   'q3');
   bind('btnQ4',   'q4');
-  bind('btnSS',   'ss');
   const ANSWER_COUNT_REQUIRED = 4;
   function getAnsweredCount() {
     let n=0; for (let q=1;q<=4;q++) if (document.querySelector(`input[name="q${q}"]:checked`)) n++;
